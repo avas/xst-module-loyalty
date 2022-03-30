@@ -1,0 +1,19 @@
+resources:
+  repositories:
+    - repository: pipelines
+      type: git
+      name: 31b84033-4e65-42e0-9a35-d0a9dac8881d/dh-azure-pipelines
+      ref: refs/heads/main
+
+trigger:
+  batch: true
+  branches:
+    include:
+    - dev
+    - main
+pr:
+  - dev
+  - main
+
+extends:
+  template: templates/dh-pipeline-modules.yml@pipelines

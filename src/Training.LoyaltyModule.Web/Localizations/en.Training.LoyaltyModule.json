@@ -1,0 +1,12 @@
+{
+  "xst-loyalty": {
+    "blades": {
+    }
+  },
+  "permissions": {
+  },
+  "settings": {
+    "TrainingLoyaltyModule": {
+    }
+  }
+}

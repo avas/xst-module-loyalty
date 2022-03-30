@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<module>
+    <id>Training.Loyalty</id>
+    <version>1.0.0</version>
+
+    <platformVersion>3.200.0</platformVersion>
+    <dependencies>
+    </dependencies>
+
+    <title>Training Loyalty module</title>
+    <description>Training Loyalty module</description>
+
+    <authors>
+        <author>Andrew Vasenev</author>
+    </authors>
+    <owners>
+        <owner>VirtoCommerce</owner>
+    </owners>
+
+    <assemblyFile>Training.LoyaltyModule.Web.dll</assemblyFile>
+    <moduleType>Training.LoyaltyModule.Web.Module, Training.LoyaltyModule.Web</moduleType>
+
+    <releaseNotes>First version.</releaseNotes>
+    <copyright>Copyright © 2022 VirtoCommerce. All rights reserved</copyright>
+    <tags>extension module</tags>
+</module>
