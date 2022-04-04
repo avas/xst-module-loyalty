@@ -2,7 +2,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Training.LoyaltyModule.Xapi.Extensions;
 using Training.LoyaltyModule.Xapi.Queries;
-using VirtoCommerce.Platform.Core;
 using VirtoCommerce.Platform.Security.Authorization;
 
 namespace Training.LoyaltyModule.Xapi.Authorization
@@ -19,7 +18,7 @@ namespace Training.LoyaltyModule.Xapi.Authorization
     {
         protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, CanReadLoyaltyDataAuthorizationRequirement requirement)
         {
-            var canAccess = context.User.IsInRole(PlatformConstants.Security.SystemRoles.Administrator);
+            var canAccess = context.CurrentUserIsAdministrator();
 
             if (!canAccess)
             {
@@ -35,14 +34,7 @@ namespace Training.LoyaltyModule.Xapi.Authorization
                 }
             }
 
-            if (canAccess)
-            {
-                context.Succeed(requirement);
-            }
-            else
-            {
-                context.Fail();
-            }
+            context.ApplyResult(canAccess, requirement);
 
             return Task.CompletedTask;
         }

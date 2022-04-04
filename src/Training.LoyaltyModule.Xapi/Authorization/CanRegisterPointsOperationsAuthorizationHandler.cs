@@ -1,6 +1,7 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
-using VirtoCommerce.Platform.Core;
+using Training.LoyaltyModule.Xapi.Commands;
+using Training.LoyaltyModule.Xapi.Extensions;
 using VirtoCommerce.Platform.Security.Authorization;
 
 namespace Training.LoyaltyModule.Xapi.Authorization
@@ -17,18 +18,15 @@ namespace Training.LoyaltyModule.Xapi.Authorization
     {
         protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, CanRegisterPointsOperationsAuthorizationRequirement requirement)
         {
-            // TODO: customers should not be able to use the registerPointsOperation mutation (obviously), but who should have access to it?..
+            var canAccess = context.CurrentUserIsAdministrator();
 
-            var canAccess = context.User.IsInRole(PlatformConstants.Security.SystemRoles.Administrator);
+            if (!canAccess && context.Resource is RegisterPointsOperationCommand registerPointsOperationCommand)
+            {
+                registerPointsOperationCommand.UserId = context.GetUserId();
+                canAccess = registerPointsOperationCommand.UserId != null;
+            }
 
-            if (canAccess)
-            {
-                context.Succeed(requirement);
-            }
-            else
-            {
-                context.Fail();
-            }
+            context.ApplyResult(canAccess, requirement);
 
             return Task.CompletedTask;
         }
