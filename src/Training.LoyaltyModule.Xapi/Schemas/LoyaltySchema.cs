@@ -7,11 +7,13 @@ using GraphQL.Types;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Training.LoyaltyModule.Core.Models;
+using Training.LoyaltyModule.Xapi.Authorization;
 using Training.LoyaltyModule.Xapi.Commands;
 using Training.LoyaltyModule.Xapi.Queries;
 using VirtoCommerce.ExperienceApiModule.Core.Extensions;
 using VirtoCommerce.ExperienceApiModule.Core.Helpers;
 using VirtoCommerce.ExperienceApiModule.Core.Infrastructure;
+using VirtoCommerce.ExperienceApiModule.Core.Infrastructure.Authorization;
 
 namespace Training.LoyaltyModule.Xapi.Schemas
 {
@@ -25,8 +27,6 @@ namespace Training.LoyaltyModule.Xapi.Schemas
             _authorizationService = authorizationService;
             _mediator = mediator;
         }
-
-        // TODO: uncomment authorization checks in this class after the testing (i.e. when there will be a way to authenticate the customer)
 
         public void Build(ISchema schema)
         {
@@ -48,11 +48,11 @@ namespace Training.LoyaltyModule.Xapi.Schemas
                         IncludeOperations = context.GetArgument<bool>("includeArguments"),
                     };
 
-                    //var authorizationResult = await _authorizationService.AuthorizeAsync(context.GetCurrentPrincipal(), request, new CanReadLoyaltyDataAuthorizationRequirement());
-                    //if (!authorizationResult.Succeeded)
-                    //{
-                    //    throw new AuthorizationError("Balance of requested user is not available for current user.");
-                    //}
+                    var authorizationResult = await _authorizationService.AuthorizeAsync(context.GetCurrentPrincipal(), request, new CanReadLoyaltyDataAuthorizationRequirement());
+                    if (!authorizationResult.Succeeded)
+                    {
+                        throw new AuthorizationError("Balance of requested user is not available for current user.");
+                    }
 
                     var result = await _mediator.Send(request);
 
@@ -84,11 +84,11 @@ namespace Training.LoyaltyModule.Xapi.Schemas
                     var type = GenericTypeHelper.GetActualType<RegisterPointsOperationCommand>();
                     var command = context.GetArgument(type, "command");
 
-                    //var authorizationResult = await _authorizationService.AuthorizeAsync(context.GetCurrentPrincipal(), command, new CanRegisterPointsOperationsAuthorizationRequirement());
-                    //if (!authorizationResult.Succeeded)
-                    //{
-                    //    throw new AuthorizationError("Current user can't register points operations.");
-                    //}
+                    var authorizationResult = await _authorizationService.AuthorizeAsync(context.GetCurrentPrincipal(), command, new CanRegisterPointsOperationsAuthorizationRequirement());
+                    if (!authorizationResult.Succeeded)
+                    {
+                        throw new AuthorizationError("Current user can't register points operations.");
+                    }
 
                     var response = (PointsOperation)await _mediator.Send(command);
 
@@ -111,11 +111,11 @@ namespace Training.LoyaltyModule.Xapi.Schemas
                 Take = context.First ?? context.PageSize ?? 20,
             };
 
-            //var authorizationResult = await _authorizationService.AuthorizeAsync(context.GetCurrentPrincipal(), query, new CanReadLoyaltyDataAuthorizationRequirement());
-            //if (!authorizationResult.Succeeded)
-            //{
-            //    throw new AuthorizationError("Points operations of requested user are not available for current user.");
-            //}
+            var authorizationResult = await _authorizationService.AuthorizeAsync(context.GetCurrentPrincipal(), query, new CanReadLoyaltyDataAuthorizationRequirement());
+            if (!authorizationResult.Succeeded)
+            {
+                throw new AuthorizationError("Points operations of requested user are not available for current user.");
+            }
 
             var response = await mediator.Send(query);
 
